@@ -11,7 +11,7 @@ Description: Constra - Construction Html5 Template
 /* Typography
 ================================================== */
 body {
-  
+  background: none;
   color: #555;
 }
 
@@ -4789,7 +4789,6 @@ p {
 .z9-card img, 
 .z9-card iframe {
   width: 100%;
-  height: 100%;
   display: block;
 }
 
@@ -4812,13 +4811,14 @@ p {
 }
 
 .z9-download-btn {
-  display: block;
-  background: #1abc9c;
-  color: white;
+  display: block !important;
+  background: #1abc9c !important;
+  color: white !important;
   text-align: center;
   padding: 10px;
   text-decoration: none;
   transition: background 0.3s ease;
+  z-index: 10;
 }
 
 .z9-download-btn:hover {
@@ -4960,7 +4960,7 @@ p {
   background-image: url('/images/patttern\ \(3\).png'); /* Make sure the path is correct */
   background-repeat: no-repeat;
   background-size: contain; /* or 'cover' if you want full stretch */
-  z-index: 10;
+  z-index: -1;
   pointer-events: none; /* Prevents it from blocking clicks */
   background-position: center;
   opacity: 0.3; /* Makes sure it's subtle behind content */
