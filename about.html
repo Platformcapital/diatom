@@ -53,23 +53,23 @@
 
 </head>
 <body>
-  <header class="navx-header">
-  <div class="navx-container">
-    <div class="navx-logo">
+  <header class="site-header">
+  <div class="header-container">
+    <div class="logo">
       <a href="index.html">
         <img src="images/logo.svg" alt="Diatom Impact Logo">
       </a>
     </div>
 
     <!-- Hamburger Menu -->
-    <div class="navx-toggle" id="navxToggle">
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">
       <span></span>
       <span></span>
       <span></span>
-    </div>
+    </button>
 
-    <!-- Navigation Links -->
-    <nav class="navx-links" id="navxMenu">
+    <!-- Navigation -->
+    <nav class="main-nav" id="mainNav">
       <ul>
         <li><a href="index.html" >Home</a></li>
         <li><a href="about.html" class="active">About Us</a></li>
@@ -367,7 +367,17 @@ document.addEventListener('DOMContentLoaded', function () {
   counters.forEach(c => io.observe(c));
 });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const toggle = document.getElementById("menuToggle");
+  const nav = document.getElementById("mainNav");
 
+  toggle.addEventListener("click", () => {
+    toggle.classList.toggle("active");
+    nav.classList.toggle("show");
+  });
+});
+</script>
 
   </div><!-- Body inner end -->
   </body>
