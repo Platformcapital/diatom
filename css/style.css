@@ -4318,7 +4318,11 @@ label {
   flex-direction: column;
   gap: 5px;
   cursor: pointer;
+  padding: 10px; /* bigger click area */
+  position: relative;
+  z-index: 2000; /* above everything else */
 }
+
 
 .navx-toggle span {
   width: 26px;
@@ -4345,6 +4349,7 @@ label {
     align-items: center;
     justify-content: center;
     transition: right 0.4s ease;
+    z-index: 1500;
   }
 
   .navx-links ul {
@@ -4366,6 +4371,22 @@ label {
   .navx-toggle.active span:nth-child(3) {
     transform: rotate(-45deg) translateY(-8px);
   }
+  .navx-toggle.active {
+  position: relative;
+  z-index: 2000;
+}
+.navx-links.show {
+  pointer-events: auto; /* clickable when visible */
+}
+.navx-links {
+  pointer-events: none; /* can’t block clicks when hidden */
+}
+.navx-toggle {
+  position: relative;
+  z-index: 9999; /* above nav menu & logo */
+  pointer-events: auto; /* ensure it can receive clicks */
+}
+
 }
 .aboutx-hero {
   position: relative;
