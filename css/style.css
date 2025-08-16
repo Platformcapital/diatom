@@ -5369,3 +5369,9 @@ p {
     border-radius: 6px;
   }
 }
+.z9-card img {
+    width: 100%;           /* Fill the width of the card */
+    aspect-ratio: 1 / 1;   /* Force a square shape */
+    object-fit: cover;     /* Crop/scale to cover the square without distortion */
+    display: block;
+}
