@@ -990,30 +990,33 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    const iframes = document.querySelectorAll("iframe");
-
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const iframe = entry.target;
-                const src = iframe.getAttribute("data-src");
-                if (src) {
-                    iframe.src = src;
-                    observer.unobserve(iframe);
-                }
-            }
-        });
-    });
-
-    iframes.forEach(iframe => {
-        // Move the src to data-src and remove src to prevent loading
+    // Function to lazy-load iframes
+    function applyLazyLoading(iframe) {
         const src = iframe.getAttribute("src");
         if (src) {
             iframe.setAttribute("data-src", src);
             iframe.removeAttribute("src");
+            iframe.setAttribute("loading", "lazy");
         }
-        observer.observe(iframe);
+    }
+
+    // Apply to existing iframes on page load
+    document.querySelectorAll("iframe").forEach(applyLazyLoading);
+
+    // Observe the body for new iframes added dynamically
+    const observer = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+            mutation.addedNodes.forEach(node => {
+                if (node.tagName === "IFRAME") {
+                    applyLazyLoading(node);
+                } else if (node.querySelectorAll) {
+                    node.querySelectorAll("iframe").forEach(applyLazyLoading);
+                }
+            });
+        });
     });
+
+    observer.observe(document.body, { childList: true, subtree: true });
 });
 </script>
 
