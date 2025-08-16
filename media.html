@@ -989,15 +989,50 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 <script>
-// Wait for the page to load
 document.addEventListener("DOMContentLoaded", function() {
-    // Select all iframes on the page
-    const iframes = document.querySelectorAll("iframe");
+    // Function to set up lazy loading for an iframe
+    function setupLazyIframe(iframe, observer) {
+        const src = iframe.getAttribute("src");
+        if (src) {
+            iframe.setAttribute("data-src", src);
+            iframe.removeAttribute("src");
+        }
+        observer.observe(iframe);
+    }
 
-    // Add lazy loading to each iframe
-    iframes.forEach(iframe => {
-        iframe.setAttribute("loading", "lazy");
+    // Intersection Observer for scroll-based lazy loading
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const iframe = entry.target;
+                const src = iframe.getAttribute("data-src");
+                if (src) {
+                    iframe.src = src;
+                    observer.unobserve(iframe);
+                }
+            }
+        });
     });
+
+    // Apply lazy loading to all existing iframes
+    document.querySelectorAll("iframe").forEach(iframe => {
+        setupLazyIframe(iframe, observer);
+    });
+
+    // Observe dynamically added iframes (e.g., when clicking "Next")
+    const mutationObserver = new MutationObserver(mutations => {
+        mutations.forEach(mutation => {
+            mutation.addedNodes.forEach(node => {
+                if (node.tagName === "IFRAME") {
+                    setupLazyIframe(node, observer);
+                } else if (node.querySelectorAll) {
+                    node.querySelectorAll("iframe").forEach(iframe => setupLazyIframe(iframe, observer));
+                }
+            });
+        });
+    });
+
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
 });
 </script>
 
