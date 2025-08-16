@@ -988,6 +988,35 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const iframes = document.querySelectorAll("iframe");
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const iframe = entry.target;
+                const src = iframe.getAttribute("data-src");
+                if (src) {
+                    iframe.src = src;
+                    observer.unobserve(iframe);
+                }
+            }
+        });
+    });
+
+    iframes.forEach(iframe => {
+        // Move the src to data-src and remove src to prevent loading
+        const src = iframe.getAttribute("src");
+        if (src) {
+            iframe.setAttribute("data-src", src);
+            iframe.removeAttribute("src");
+        }
+        observer.observe(iframe);
+    });
+});
+</script>
+
   </div><!-- Body inner end -->
   </body>
 
