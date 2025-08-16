@@ -990,48 +990,66 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // Function to set up lazy loading for an iframe
-    function setupLazyIframe(iframe, observer) {
-        const src = iframe.getAttribute("src");
-        if (src) {
-            iframe.setAttribute("data-src", src);
+    let loadQueue = [];
+    let loading = false;
+
+    function processQueue() {
+        if (loadQueue.length === 0) {
+            loading = false;
+            return;
+        }
+        loading = true;
+        const iframe = loadQueue.shift();
+        const src = iframe.getAttribute("data-src");
+        if (src) iframe.src = src;
+        setTimeout(processQueue, 200); // stagger loading
+    }
+
+    function lazyLoadIframe(iframe) {
+        if (!iframe.src) {
+            loadQueue.push(iframe);
+            if (!loading) processQueue();
+        }
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const iframe = entry.target;
+
+            if (entry.isIntersecting) {
+                // Load iframe when visible
+                lazyLoadIframe(iframe);
+            } else {
+                // Unload iframe when far out of view
+                if (iframe.src) {
+                    iframe.setAttribute("data-src", iframe.src);
+                    iframe.removeAttribute("src");
+                }
+            }
+        });
+    }, { root: null, rootMargin: "0px 0px 500px 0px", threshold: 0 });
+
+    function setupLazyIframe(iframe) {
+        if (iframe.src) {
+            iframe.setAttribute("data-src", iframe.src);
             iframe.removeAttribute("src");
         }
         observer.observe(iframe);
     }
 
-    // Intersection Observer for scroll-based lazy loading
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const iframe = entry.target;
-                const src = iframe.getAttribute("data-src");
-                if (src) {
-                    iframe.src = src;
-                    observer.unobserve(iframe);
-                }
-            }
-        });
-    });
+    // Apply to existing iframes
+    document.querySelectorAll("iframe").forEach(setupLazyIframe);
 
-    // Apply lazy loading to all existing iframes
-    document.querySelectorAll("iframe").forEach(iframe => {
-        setupLazyIframe(iframe, observer);
-    });
-
-    // Observe dynamically added iframes (e.g., when clicking "Next")
+    // Observe dynamically added iframes (Next page)
     const mutationObserver = new MutationObserver(mutations => {
         mutations.forEach(mutation => {
             mutation.addedNodes.forEach(node => {
-                if (node.tagName === "IFRAME") {
-                    setupLazyIframe(node, observer);
-                } else if (node.querySelectorAll) {
-                    node.querySelectorAll("iframe").forEach(iframe => setupLazyIframe(iframe, observer));
-                }
+                if (node.tagName === "IFRAME") setupLazyIframe(node);
+                else if (node.querySelectorAll)
+                    node.querySelectorAll("iframe").forEach(setupLazyIframe);
             });
         });
     });
-
     mutationObserver.observe(document.body, { childList: true, subtree: true });
 });
 </script>
