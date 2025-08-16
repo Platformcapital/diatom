@@ -989,34 +989,15 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 <script>
+// Wait for the page to load
 document.addEventListener("DOMContentLoaded", function() {
-    // Function to lazy-load iframes
-    function applyLazyLoading(iframe) {
-        const src = iframe.getAttribute("src");
-        if (src) {
-            iframe.setAttribute("data-src", src);
-            iframe.removeAttribute("src");
-            iframe.setAttribute("loading", "lazy");
-        }
-    }
+    // Select all iframes on the page
+    const iframes = document.querySelectorAll("iframe");
 
-    // Apply to existing iframes on page load
-    document.querySelectorAll("iframe").forEach(applyLazyLoading);
-
-    // Observe the body for new iframes added dynamically
-    const observer = new MutationObserver(mutations => {
-        mutations.forEach(mutation => {
-            mutation.addedNodes.forEach(node => {
-                if (node.tagName === "IFRAME") {
-                    applyLazyLoading(node);
-                } else if (node.querySelectorAll) {
-                    node.querySelectorAll("iframe").forEach(applyLazyLoading);
-                }
-            });
-        });
+    // Add lazy loading to each iframe
+    iframes.forEach(iframe => {
+        iframe.setAttribute("loading", "lazy");
     });
-
-    observer.observe(document.body, { childList: true, subtree: true });
 });
 </script>
 
